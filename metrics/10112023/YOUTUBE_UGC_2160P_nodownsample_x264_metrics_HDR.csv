@@ -1,0 +1,6 @@
+vid,category,resolution,width,height,pixfmt,framerate,bitrate_rawvideo (kb/s),bitrate_encoded (kb/s),PSNR,VMAF,QP,encoding_elapsed_time,decoding_elapsed_time,duplicate_count,duplicate_bitrate_rawvideo (kb/s),start_time_encode,end_time_encode,count_encode,start_time_decode,end_time_decode,count_decode,target_encode_energy,decode_energy,total_energy
+HDR_2160P-06ae,HDR,2160,3840,2160,yuv420p10le,24,4767631,193049,49.99496,99.989774,10,42.576667,78.542127,,,,,,,,,,,
+HDR_2160P-06ae,HDR,2160,3840,2160,yuv420p10le,24,4767631,65227,42.210653,98.042834,20,33.117435,47.931568,,,,,,,,,,,
+HDR_2160P-06ae,HDR,2160,3840,2160,yuv420p10le,24,4767631,13811,35.567422,82.213834,30,23.406572,20.040345,,,,,,,,,,,
+HDR_2160P-06ae,HDR,2160,3840,2160,yuv420p10le,24,4767631,3181,30.645464,44.936518,40,17.955917,41.539142,,,,,,,,,,,
+HDR_2160P-06ae,HDR,2160,3840,2160,yuv420p10le,24,4767631,975,26.610637,8.963583,50,17.152362,99.055482,,,,,,,,,,,

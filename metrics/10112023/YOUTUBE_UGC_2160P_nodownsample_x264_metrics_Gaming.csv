@@ -1,0 +1,6 @@
+vid,category,resolution,width,height,pixfmt,framerate,bitrate_rawvideo (kb/s),bitrate_encoded (kb/s),PSNR,VMAF,QP,encoding_elapsed_time,decoding_elapsed_time,duplicate_count,duplicate_bitrate_rawvideo (kb/s),start_time_encode,end_time_encode,count_encode,start_time_decode,end_time_decode,count_decode,target_encode_energy,decode_energy,total_energy
+Gaming_2160P-2dc4,Gaming,2160,3840,2160,yuv420p,59.94006309,5956076,166422,28.890752,33.340012,10,120.780793,261.463272,,,,,,,,,,,
+Gaming_2160P-2dc4,Gaming,2160,3840,2160,yuv420p,59.94006309,5956076,40608,28.940896,32.97869,20,46.668646,69.226121,,,,,,,,,,,
+Gaming_2160P-2dc4,Gaming,2160,3840,2160,yuv420p,59.94006309,5956076,10031,29.084108,30.709477,30,39.116447,82.357739,,,,,,,,,,,
+Gaming_2160P-2dc4,Gaming,2160,3840,2160,yuv420p,59.94006309,5956076,2862,29.201858,22.333218,40,41.192962,79.623612,,,,,,,,,,,
+Gaming_2160P-2dc4,Gaming,2160,3840,2160,yuv420p,59.94006309,5956076,775,28.362463,8.651808,50,40.91572,81.110428,,,,,,,,,,,

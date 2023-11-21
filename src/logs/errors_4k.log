@@ -1,0 +1,3 @@
+2023-11-07 16:55:30,304 - ERROR - run_codec_metrics_nodownsample_4k_repeat_duplicate.py:324 -  error: process.returncode != 0
+2023-11-07 22:52:58,422 - ERROR - run_codec_metrics_nodownsample_4k_repeat_duplicate.py:324 -  error: process.returncode != 0
+2023-11-07 23:09:50,963 - ERROR - run_codec_metrics_nodownsample_4k_repeat_duplicate.py:324 -  error: process.returncode != 0

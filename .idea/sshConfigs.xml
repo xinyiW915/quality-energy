@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig connectionConfig="{&quot;hostKeyVerifier&quot;:{&quot;stringHostKeyChecking&quot;:&quot;ASK&quot;}}" host="10.70.16.208" id="c99684ca-541d-46f8-b5d5-ddd54e05af0f" keyPath="$USER_HOME$/.ssh/id_rsa" port="22" nameFormat="DESCRIPTIVE" username="um20242" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="10.70.16.98" id="5838b167-8b1b-4fb8-a462-4e36c8619177" port="22" nameFormat="DESCRIPTIVE" username="xinyi" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>
