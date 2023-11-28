@@ -1,8 +1,8 @@
 import os
 import pandas as pd
-import re
 
-folder_path = '../metrics/energy/x264/'
+codec = f'x264'
+folder_path = f'../metrics/energy/{codec}/'
 
 # 获取文件夹下所有的文件
 files = os.listdir(folder_path)
@@ -38,4 +38,4 @@ for file in files:
 
             hardware_data = pd.concat([hardware_data, combined_df], ignore_index=True)
 
-hardware_data.to_csv('../metrics/quality_energy_hardware.csv', index=False)
+hardware_data.to_csv(f'../metrics/quality_energy_hardware_{codec}.csv', index=False)
