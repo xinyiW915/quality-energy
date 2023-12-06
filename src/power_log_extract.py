@@ -27,8 +27,8 @@ if __name__ == '__main__':
     # print(power_log.head(2))
     #
     # power_log.columns = ['time_stamp', 'power']
-    # power_log['time_stamp'] = pd.to_datetime(power_log['time_stamp'])  # 将数据类型转换为日期类型
-    # power_log = power_log.set_index('time_stamp')  # 将date设置为index
+    # power_log['time_stamp'] = pd.to_datetime(power_log['time_stamp'])  # Convert the data type to datetime
+    # power_log = power_log.set_index('time_stamp')  # # Set date as the index
     # print(power_log.head(2))
     # print(power_log.tail(2))
     # print(power_log.shape)

@@ -1,0 +1,42 @@
+2023/12/05 5418:54:20,429 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py DEBUG target_coding    {'start_time': 0.200598, 'end_time': 3.63519}
+Name: 0, dtype: object
+2023/12/05 5418:54:20,430 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py ERROR Unknown string format: 0.200598
+2023/12/05 5418:54:20,430 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py ERROR Traceback (most recent call last):
+  File "/Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py", line 57, in calc_job_energy_on_job_row
+    item_energy = fn_calc_energy(df_power, start_time, end_time, row=job) / job_count
+  File "/Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py", line 79, in calc_energy_in_interval
+    interval_start = dateutil.parser.parse(str(start_time))
+  File "/Users/xxxyy/.conda/envs/videoenc/lib/python3.10/site-packages/dateutil/parser/_parser.py", line 1368, in parse
+    return DEFAULTPARSER.parse(timestr, **kwargs)
+  File "/Users/xxxyy/.conda/envs/videoenc/lib/python3.10/site-packages/dateutil/parser/_parser.py", line 643, in parse
+    raise ParserError("Unknown string format: %s", timestr)
+dateutil.parser._parser.ParserError: Unknown string format: 0.200598
+
+2023/12/05 5518:55:07,173 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py DEBUG target_coding    {'start_time': 0.200598, 'end_time': 3.63519}
+Name: 0, dtype: object
+2023/12/05 5518:55:07,174 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py ERROR Unknown string format: 0.200598
+2023/12/05 5518:55:07,174 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py ERROR Traceback (most recent call last):
+  File "/Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py", line 57, in calc_job_energy_on_job_row
+    item_energy = fn_calc_energy(df_power, start_time, end_time, row=job) / job_count
+  File "/Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py", line 79, in calc_energy_in_interval
+    interval_start = dateutil.parser.parse(str(start_time))
+  File "/Users/xxxyy/.conda/envs/videoenc/lib/python3.10/site-packages/dateutil/parser/_parser.py", line 1368, in parse
+    return DEFAULTPARSER.parse(timestr, **kwargs)
+  File "/Users/xxxyy/.conda/envs/videoenc/lib/python3.10/site-packages/dateutil/parser/_parser.py", line 643, in parse
+    raise ParserError("Unknown string format: %s", timestr)
+dateutil.parser._parser.ParserError: Unknown string format: 0.200598
+
+2023/12/05 0819:08:00,203 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py DEBUG target_coding    {'start_time': 0.200598, 'end_time': 3.63519}
+Name: 0, dtype: object
+2023/12/05 0819:08:00,205 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py ERROR Unknown string format: 0.200598
+2023/12/05 0819:08:00,205 /Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py ERROR Traceback (most recent call last):
+  File "/Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py", line 57, in calc_job_energy_on_job_row
+    item_energy = fn_calc_energy(df_power, start_time, end_time, row=job) / job_count
+  File "/Users/xxxyy/PycharmProjects/video-quality-energy/quality-energy/src/analysis/task_energy.py", line 79, in calc_energy_in_interval
+    interval_start = dateutil.parser.parse(str(start_time))
+  File "/Users/xxxyy/.conda/envs/videoenc/lib/python3.10/site-packages/dateutil/parser/_parser.py", line 1368, in parse
+    return DEFAULTPARSER.parse(timestr, **kwargs)
+  File "/Users/xxxyy/.conda/envs/videoenc/lib/python3.10/site-packages/dateutil/parser/_parser.py", line 643, in parse
+    raise ParserError("Unknown string format: %s", timestr)
+dateutil.parser._parser.ParserError: Unknown string format: 0.200598
+

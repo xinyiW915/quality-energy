@@ -4,10 +4,10 @@ import pandas as pd
 codec = f'x264'
 folder_path = f'../metrics/energy/{codec}/'
 
-# 获取文件夹下所有的文件
+# Get all files in the folder
 files = os.listdir(folder_path)
 
-# 用于存储已处理的video_name，防止重复处理
+# Used to store processed video names to prevent duplicate processing
 processed_video_names = set()
 
 hardware_data = pd.DataFrame()
@@ -16,24 +16,24 @@ for file in files:
         video_name = file.rsplit('_', 2)[-2] + '_' + file.rsplit('_', 2)[-1].split('.')[0]
         # print(video_name)
 
-        # 检查是否已处理过这个video_name
+        # Check if this video name has been processed before.
         if video_name not in processed_video_names:
-            # 添加到已处理集合
+            # Add to the processed set
             processed_video_names.add(video_name)
 
-            # 找到所有具有相同video_name的文件
+            # Find all files with the same video name
             relevant_files = [f for f in sorted(files, reverse=True) if video_name in f]
             print(relevant_files)
 
-            # 创建一个空的DataFrame来存储相同video_name的所有文件数据
+            # Create an empty DataFrame to store data from all files with the same video name
             combined_df = pd.DataFrame()
 
-            # 合并相同video_name的所有文件数据
+            # Merge data from all files with the same video name
             for relevant_file in relevant_files:
                 df = pd.read_csv(os.path.join(folder_path, relevant_file))
                 combined_df = pd.concat([combined_df, df], ignore_index=True)
 
-            # 添加video_name列
+            # Add the video_name column
             combined_df.insert(0, 'video_name', video_name)
 
             hardware_data = pd.concat([hardware_data, combined_df], ignore_index=True)
