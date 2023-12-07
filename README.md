@@ -5,7 +5,7 @@
 ![Overall Experiment Architecture](./energy_workflow.png)
 
 
-## Preprocessing
+### Preprocessing
 - [x] Convert MKV to YUV
 - [x] Read Bitrate for Raw Video
 - [x] Downsample 4K to 1080p and 720p
@@ -17,31 +17,31 @@
   - 2 duplicate times for 720p videos
 - [x] Read Bitrate for Raw Duplicate Video
 
-## Encoding  
+### Encoding  
 - [x] Encode with Different QP Levels: [10, 20, 30, 40, 50]
 - [x] Hardware Power Measurement: Repeat 10 times
 - [x] Software Power Experiment: No repeat time
 - [x] Read Bitrate for Encoded Video
 - [x] Calculate Encoding Energy Consumption
 
-## Decoding
+### Decoding
 - [x] Hardware Power Measurement: Repeat 10 times
 - [x] Software Power Experiment: No repeat time
 - [x] Without Writing the Decoded File
 - [x] Calculate Decoding Energy Consumption
 
-## Measure Quality
+### Measure Quality
 - [x] Upsample Decoded Downsampled Videos to 4K 
 - [x] Calculate PSNR
 - [x] Calculate VMAF
 
-## Energy Consumption
+### Energy Consumption
 - [x] Measure Time and Get Power Log
 - [x] Calculate Energy for Each Coding Job (Encoding/Decoding)
 
 
 
-# Main Workflow
+## Main Workflow
 
 - **run_codec_metrics.py**: Main workflow
 - **run_codec_metrics_downsample.py**: Main workflow with downsample process and hardware power measurement
@@ -75,7 +75,7 @@
   - Average based on different QP levels, all codecs in one figure
 
 
-## Data Analysis
+### Data Analysis
 
 - **combine_csv.py**
 - **run_energy_log.py**: Calculate energy for each codec without repeat
