@@ -1,0 +1,245 @@
+#For ffmpeg to convert .mkv to .yuv: 
+ffmpeg -loglevel error -y -i originalVideo_name.mkv -pix_fmt yuv420p -vsync 0 input_yuv_name.yuv
+
+
+#For codec(x265): 
+ffmpeg -s $widthx$height -r $FPS -pix_fmt $YUVfmt -i input_yuv_name.yuv -c:v libx265 -preset veryfast -crf $QP output_mp4_name.mp4
+
+
+#For vmaf (Source and target video have the same dimensions (height and width)): 
+ffmpeg -i output_mp4_name.mp4 -i originalVideo_name.mp4 -lavfi libvmaf="model_path=vmaf_v0.6.1.pkl":log_path=vmaf_logfile.txt -f null -
+
+
+#For vmaf (Different resolutions for source and target video): 
+ffmpeg -i test_720p30.mp4 -i test_1080p30.mp4 -filter_complex "[0:v]scale=1920x1080:flags=bicubic[main]; [1:v]scale=1920x1080:flags=bicubic,format=pix_fmts=yuv420p,fps=fps=30/1[ref]; \  
+[main][ref]libvmaf=psnr=true:log_path=vmaflog.json:log_fmt=json” \
+-f null -
+
+
+#下面是一个例子，说明你如何在一对YUV文件上运行FFmpeg+libvmaf。首先，下载参考视频src01_hrc00_576x324.yuv和扭曲的视频src01_hrc01_576x324.yuv。-r 24设置帧率（注意它需要在-i之前），PTS-STARTPTS同步两个视频的PTS（演示时间戳）（如果你的一个视频没有从PTS 0开始，例如，你从一个长的视频流中切出你的视频，这就很关键）。正确设置帧率和PTS是很重要的，因为FFmpeg过滤器是根据时间戳而不是帧来同步的。
+log_path被设置为标准输出/dev/stdout。它使用位于/usr/local/share/model/vmaf_float_v0.6.1.json位置的model_path（这是默认的，可以省略）。
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i Animation/Animation_1080P-05f8.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i Animation/Animation_1080P-05f8.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=/dev/stdout:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null -
+
+
+#下面是一个更复杂的例子，输入是打包的.mp4文件。它输入了1）一个480p的参考视频Seeking_30_480_1050.mp4和2）一个288p的扭曲视频Seeking_10_288_375.mp4，使用双三次元升压到720x480，并计算这两个480p视频的VMAF。Bicubic被用作推荐的升采样方法（更多细节也可参见技术博客）。
+ffmpeg \
+    -r 24 -i Seeking_30_480_1050.mp4 \
+    -r 24 -i Seeking_10_288_375.mp4 \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]scale=720:480:flags=bicubic,setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=/dev/stdout:model_path={your_vmaf_dir}/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null -
+
+
+
+#For PSNR:
+ffmpeg -i Animation/Animation_1080P-05f8.mp4 -i Animation/Animation_1080P-05f8.mkv -lavfi psnr=stats_file=psnr_logfile.txt -f null -
+ffmpeg -video_size 1920x1080 -i Animation/decoded/Animation_1080P-05f8_decoded_crf_22.yuv -video_size 1920x1080 -i Animation/input/Animation_1080P-05f8.yuv -lavfi libvmaf=model='path=vmaf_v0.6.1.json':log_path=Animation_1080P-05f8_decoded_crf_22.csv -f null -
+
+# res2 = subprocess.Popen(cmd_encode, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# print(res2.communicate())
+
+---------------------------------------------------------------COMMAND LINE-----------------------------------------------------------------------------
+#TEST SEQUENCES (mkv->yuv):
+ffmpeg -loglevel error -y -i Animation/Animation_1080P-05f8.mkv -pix_fmt yuv420p -vsync 0 Animation/input/Animation_1080P-05f8.yuv
+ffmpeg -loglevel error -y -i Animation/Animation_1080P-3d67.mkv -pix_fmt yuv420p -vsync 0 Animation/input/Animation_1080P-3d67.yuv
+ffmpeg -loglevel error -y -i Animation/Animation_1080P-646f.mkv -pix_fmt yuv420p -vsync 0 Animation/input/Animation_1080P-646f.yuv
+
+ffmpeg -loglevel error -y -i TelevisionClip/TelevisionClip_1080P-3d83.mkv -pix_fmt yuv420p -vsync 0 TelevisionClip/input/TelevisionClip_1080P-3d83.yuv
+ffmpeg -loglevel error -y -i TelevisionClip/TelevisionClip_1080P-5278.mkv -pix_fmt yuv420p -vsync 0 TelevisionClip/input/TelevisionClip_1080P-5278.yuv
+ffmpeg -loglevel error -y -i TelevisionClip/TelevisionClip_1080P-68c6.mkv -pix_fmt yuv420p -vsync 0 TelevisionClip/input/TelevisionClip_1080P-68c6.yuv
+
+
+
+
+# x265 Encode at CRF:22,27,32,37,50
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libx265 -preset veryfast -crf 60 -psnr Animation/encoded/Animation_1080P-05f8_encoded_fps25_crf_60.mp4 > Animation/ffmpeg/x265/Animation_1080P-05f8_encoded_crf_60.txt 2>&1
+
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libx265 -preset veryfast -crf 22 -psnr Animation/encoded/Animation_1080P-05f8_encoded_crf_22.mp4 > Animation/ffmpeg/x265/Animation_1080P-05f8_encoded_crf_22.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-3d67.yuv -c:v libx265 -preset veryfast -crf 22 -psnr Animation/encoded/Animation_1080P-3d67_encoded_crf_22.mp4 > Animation/ffmpeg/x265/Animation_1080P-3d67_encoded_crf_22.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-646f.yuv -c:v libx265 -preset veryfast -crf 22 -psnr Animation/encoded/Animation_1080P-646f_encoded_crf_22.mp4 > Animation/ffmpeg/x265/Animation_1080P-646f_encoded_crf_22.txt 2>&1
+
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libx265 -preset veryfast -crf 32 -psnr Animation/encoded/Animation_1080P-05f8_encoded_crf_32.mp4 > Animation/ffmpeg/x265/Animation_1080P-05f8_encoded_crf_32.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-3d67.yuv -c:v libx265 -preset veryfast -crf 32 -psnr Animation/encoded/Animation_1080P-3d67_encoded_crf_32.mp4 > Animation/ffmpeg/x265/Animation_1080P-3d67_encoded_crf_32.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-646f.yuv -c:v libx265 -preset veryfast -crf 32 -psnr Animation/encoded/Animation_1080P-646f_encoded_crf_32.mp4 > Animation/ffmpeg/x265/Animation_1080P-646f_encoded_crf_32.txt 2>&1
+
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libx265 -preset veryfast -crf 50 -psnr Animation/encoded/Animation_1080P-05f8_encoded_crf_50.mp4 > Animation/ffmpeg/x265/Animation_1080P-05f8_encoded_crf_50.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-3d67.yuv -c:v libx265 -preset veryfast -crf 50 -psnr Animation/encoded/Animation_1080P-3d67_encoded_crf_50.mp4 > Animation/ffmpeg/x265/Animation_1080P-3d67_encoded_crf_50.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-646f.yuv -c:v libx265 -preset veryfast -crf 50 -psnr Animation/encoded/Animation_1080P-646f_encoded_crf_50.mp4 > Animation/ffmpeg/x265/Animation_1080P-646f_encoded_crf_50.txt 2>&1
+
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-3d83.yuv -c:v libx265 -preset veryfast -crf 22 -psnr TelevisionClip/encoded/TelevisionClip_1080P-3d83_encoded_crf_22.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-3d83_encoded_crf_22.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-5278.yuv -c:v libx265 -preset veryfast -crf 22 -psnr TelevisionClip/encoded/TelevisionClip_1080P-5278_encoded_crf_22.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-5278_encoded_crf_22.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-68c6.yuv -c:v libx265 -preset veryfast -crf 22 -psnr TelevisionClip/encoded/TelevisionClip_1080P-68c6_encoded_crf_22.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-68c6_encoded_crf_22.txt 2>&1
+
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-3d83.yuv -c:v libx265 -preset veryfast -crf 32 -psnr TelevisionClip/encoded/TelevisionClip_1080P-3d83_encoded_crf_32.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-3d83_encoded_crf_32.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-5278.yuv -c:v libx265 -preset veryfast -crf 32 -psnr TelevisionClip/encoded/TelevisionClip_1080P-5278_encoded_crf_32.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-5278_encoded_crf_32.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-68c6.yuv -c:v libx265 -preset veryfast -crf 32 -psnr TelevisionClip/encoded/TelevisionClip_1080P-68c6_encoded_crf_32.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-68c6_encoded_crf_32.txt 2>&1
+
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-3d83.yuv -c:v libx265 -preset veryfast -crf 50 -psnr TelevisionClip/encoded/TelevisionClip_1080P-3d83_encoded_crf_50.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-3d83_encoded_crf_50.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-5278.yuv -c:v libx265 -preset veryfast -crf 50 -psnr TelevisionClip/encoded/TelevisionClip_1080P-5278_encoded_crf_50.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-5278_encoded_crf_50.txt 2>&1
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i TelevisionClip/input/TelevisionClip_1080P-68c6.yuv -c:v libx265 -preset veryfast -crf 50 -psnr TelevisionClip/encoded/TelevisionClip_1080P-68c6_encoded_crf_50.mp4 > TelevisionClip/ffmpeg/x265/TelevisionClip_1080P-68c6_encoded_crf_50.txt 2>&1
+
+# x264 Encode at CRF
+ffmpeg -i input -c:v libx264 -preset slow -crf 22 -c:a copy output.mkv
+
+# vp9 Encode at CRF
+ffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 2M output.webm
+ffmpeg -s 1920x1080 -r 25 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libvpx-vp9 -row-mt 1 -crf 10 -b:v 0 output.webm
+
+# SVT-AV1 Encode at CRF
+ffmpeg -i input.mp4 -c:v libsvtav1 -crf 35 svtav1_test.mp4
+
+# x265 Decode at CRF:22,27,32,37,50
+ffmpeg -i Animation/encoded/Animation_1080P-05f8_encoded_crf_22.mp4 -y Animation/decoded/Animation_1080P-05f8_decoded_crf_22.yuv
+ffmpeg -i Animation/encoded/Animation_1080P-3d67_encoded_crf_22.mp4 -y Animation/decoded/Animation_1080P-3d67_decoded_crf_22.yuv
+ffmpeg -i Animation/encoded/Animation_1080P-646f_encoded_crf_22.mp4 -y Animation/decoded/Animation_1080P-646f_decoded_crf_22.yuv
+
+ffmpeg -i Animation/encoded/Animation_1080P-05f8_encoded_crf_32.mp4 -y Animation/decoded/Animation_1080P-05f8_decoded_crf_32.yuv
+ffmpeg -i Animation/encoded/Animation_1080P-3d67_encoded_crf_32.mp4 -y Animation/decoded/Animation_1080P-3d67_decoded_crf_32.yuv
+ffmpeg -i Animation/encoded/Animation_1080P-646f_encoded_crf_32.mp4 -y Animation/decoded/Animation_1080P-646f_decoded_crf_32.yuv
+
+ffmpeg -i Animation/encoded/Animation_1080P-05f8_encoded_crf_50.mp4 -y Animation/decoded/Animation_1080P-05f8_decoded_crf_50.yuv
+ffmpeg -i Animation/encoded/Animation_1080P-3d67_encoded_crf_50.mp4 -y Animation/decoded/Animation_1080P-3d67_decoded_crf_50.yuv
+ffmpeg -i Animation/encoded/Animation_1080P-646f_encoded_crf_50.mp4 -y Animation/decoded/Animation_1080P-646f_decoded_crf_50.yuv
+
+
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-3d83_encoded_crf_22.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-3d83_decoded_crf_22.yuv
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-5278_encoded_crf_22.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-5278_decoded_crf_22.yuv
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-68c6_encoded_crf_22.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-68c6_decoded_crf_22.yuv
+
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-3d83_encoded_crf_32.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-3d83_decoded_crf_32.yuv
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-5278_encoded_crf_32.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-5278_decoded_crf_32.yuv
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-68c6_encoded_crf_32.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-68c6_decoded_crf_32.yuv
+
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-3d83_encoded_crf_50.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-3d83_decoded_crf_50.yuv
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-5278_encoded_crf_50.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-5278_decoded_crf_50.yuv
+ffmpeg -i TelevisionClip/encoded/TelevisionClip_1080P-68c6_encoded_crf_50.mp4 -y TelevisionClip/decoded/TelevisionClip_1080P-68c6_decoded_crf_50.yuv
+
+
+
+
+# VMAF computation
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i Animation/decoded/Animation_1080P-05f8_decoded_crf_22.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=Animation/vmaf/vmaf_Animation_1080P-05f8_decoded_crf_22.csv:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null - > Animation/vmaf/vmaf_Animation_1080P-05f8_decoded_crf_22.txt 2>&1
+
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i Animation/decoded/Animation_1080P-3d67_decoded_crf_22.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i ../videocodec/input/Animation_1080P-3d67.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=Animation/vmaf/vmaf_Animation_1080P-3d67_decoded_crf_22.csv:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null - > Animation/vmaf/vmaf_Animation_1080P-3d67_decoded_crf_22.txt 2>&1
+
+
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i Animation/decoded/Animation_1080P-646f_decoded_crf_22.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i ../videocodec/input/Animation_1080P-646f.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=Animation/vmaf/vmaf_Animation_1080P-646f_decoded_crf_22.csv:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null - > Animation/vmaf/vmaf_Animation_1080P-646f_decoded_crf_22.txt 2>&1
+
+
+
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i TelevisionClip/decoded/TelevisionClip_1080P-3d83_decoded_crf_22.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i TelevisionClip/input/TelevisionClip_1080P-3d83.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=TelevisionClip/vmaf/vmaf_TelevisionClip_1080P-3d83_decoded_crf_22.csv:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null - > TelevisionClip/vmaf/vmaf_TelevisionClip_1080P-3d83_decoded_crf_22.txt 2>&1
+
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i TelevisionClip/decoded/TelevisionClip_1080P-5278_decoded_crf_22.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i TelevisionClip/input/TelevisionClip_1080P-5278.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=TelevisionClip/vmaf/vmaf_TelevisionClip_1080P-5278_decoded_crf_22.csv:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null - > TelevisionClip/vmaf/vmaf_TelevisionClip_1080P-5278_decoded_crf_22.txt 2>&1
+
+ffmpeg -video_size 1920x1080 -r 25 -pixel_format yuv420p -i TelevisionClip/decoded/TelevisionClip_1080P-68c6_decoded_crf_22.yuv \
+    -video_size 1920x1080 -r 25 -pixel_format yuv420p -i TelevisionClip/input/TelevisionClip_1080P-68c6.yuv \
+    -lavfi "[0:v]setpts=PTS-STARTPTS[reference]; \
+            [1:v]setpts=PTS-STARTPTS[distorted]; \
+            [distorted][reference]libvmaf=log_fmt=xml:log_path=TelevisionClip/vmaf/vmaf_TelevisionClip_1080P-68c6_decoded_crf_22.csv:model_path=/Users/xxxyy/Videocodec/vmaf/model/vmaf_v0.6.1.json:n_threads=4" \
+    -f null - > TelevisionClip/vmaf/vmaf_TelevisionClip_1080P-68c6_decoded_crf_22.txt 2>&1
+
+
+
+
+
+# x264 Encode:
+ffmpeg -s 1920x1080 -r 25.0 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libx264 -preset veryfast -crf 12 ../videocodec/encoded/x264/Animation_1080P-05f8_encoded_fps25.0_crf_12.mp4
+
+# x265 Encode:
+ffmpeg -s 1920x1080 -r 25.0 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libx265 -preset veryfast -crf 12 ../videocodec/encoded/x264/Animation_1080P-05f8_encoded_fps25.0_crf_12.mp4
+
+# VP9 Encode:
+ffmpeg -s 1920x1080 -r 25.0 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libvpx-vp9 -row-mt 1 -crf 12 -b:v 0 ../videocodec/encoded/VP9/Animation_1080P-05f8_encoded_fps25.0_crf_12.webm
+
+# SVT-AV1 Encode:
+ffmpeg -s 1920x1080 -r 25.0 -pix_fmt yuv420p -i ../videocodec/input/Animation_1080P-05f8.yuv -c:v libaom-av1 -row-mt 1 -tiles 2x2 -crf 12 -b:v 0 ../videocodec/encoded/SVT-AV1/Animation_1080P-05f8_encoded_fps25.0_crf_12.mp4
+
+
+Count frame:
+ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of default=nokey=1:noprint_wrappers=1 Animation_1080P-3d67_encoded_fps4.0_crf_10.mp4
+
+
+ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of default=nokey=1:noprint_wrappers=1 ../../../ugc-dataset/Animation_1080P-3d67.mkv
+
+
+
+if codec == 'SVT-AV1':
+codec_name = 'libsvtav1' 
+qp_level = [12, 18, 24, 30, 36, 42, 48, 54, 60]
+ffmpeg -y -i Animation_1080P-05f8.mkv -pix_fmt yuv420p -vsync 0 Animation_1080P-05f8.yuv
+ffmpeg -y -i Animation_1080P-3d67.mkv -pix_fmt yuv420p -vsync 0 Animation_1080P-3d67.yuv
+ffmpeg -y -i Animation_1080P-646f.mkv -pix_fmt yuv420p -vsync 0 Animation_1080P-646f.yuv
+ffmpeg -y -i TelevisionClip_1080P-3d83.mkv -pix_fmt yuv420p -vsync 0 TelevisionClip_1080P-3d83.yuv
+ffmpeg -y -i TelevisionClip_1080P-5278.mkv -pix_fmt yuv420p -vsync 0 TelevisionClip_1080P-5278.yuv
+ffmpeg -y -i TelevisionClip_1080P-68c6.mkv -pix_fmt yuv420p -vsync 0 TelevisionClip_1080P-68c6.yuv
+
+pick two sequences with different VMAF-bitrate curves and do the following: 
+1. use ffmpeg to downsample from 1080p to 720p and to 540p:
+ffmpeg -s:v 1920x1080 -pix_fmt yuv420p -i input.yuv -vf scale=960:540:flags=lanczos -s:v 960x540 -pix_fmt yuv420p output.yuv
+ffmpeg -s:v 1920x1080 -pix_fmt yuv420p -i input.yuv -vf scale=1280:720:flags=lanczos -s:v 1280x720 -pix_fmt yuv420p output.yuv
+
+ffmpeg -s:v 1920x1080 -r 30 -pix_fmt yuv420p -i input.yuv -vf "scale=1280:720:flags=lanczos" -r 30 -s:v 1280x720 -pix_fmt yuv420p output.yuv
+
+
+2. encode the downsampled versions at the same crfs as the 1080p:
+
+3. decode: 
+
+4. upsample to 1080p: 
+ffmpeg -i input.mp4 -vf scale=1920x1080:flags=lanczos output_1080p.mp4
+
+5. measure the quality (VMAF) of the upsampled videos:
+
+
+ffplay:
+ffplay -f rawvideo -pixel_format yuv420p -video_size 1920x1080 -i Animation_1080P-646f_downsample_540p_decoded_crf_12_upsample_1080p.yuv
+
+
+ugcdata_ori_path = '../ugc-dataset/'
+ugcdata_down_path = '../ugc-dataset/downsample/downsample_ugc/'
+encode_path = '../ugc-dataset/downsample/encode/'
+decode_path = '../ugc-dataset/downsample/decode/'
+upscale_path = '../ugc-dataset/downsample/upscale/'
+ffmpeg_path = '../ugc-dataset/downsample/ffmpeg/'
+original_path = '../ugc-dataset/downsample/input/'
+vmaf_path = '../ugc-dataset/downsample/vmaf/'
+
+
+        # --------------------Downsample to 540p/720p------------------------
+        downsample_video_540, downsample_video_720 = downscale_video(original_video, ugcdata_down_path, video, video_width, video_height, framerate, pixfmt)
+        downsample_video_list = [f'{video}_downsample_540p', f'{video}_downsample_720p']
+        downsample_width_list = [960, 1280]
+        downsample_height_list = [540, 720]
+        result_list = [(downsample_video, qp, width, height) for downsample_video, width, height in
+                       zip(downsample_video_list, downsample_width_list, downsample_height_list) for qp in qp_level]

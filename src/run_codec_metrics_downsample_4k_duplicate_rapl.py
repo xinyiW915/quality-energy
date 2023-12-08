@@ -310,7 +310,7 @@ if __name__ == '__main__':
     original_path = '/home/um20242/quality-energy/videocodec_downsample_4k/input/'
     vmaf_path = '/home/um20242/quality-energy/videocodec_downsample_4k/vmaf/'
 
-    codec = 'x264'
+    codec = 'x265'
     codec_path = f'{ffmpeg_path}{codec}/'
     if codec == 'x265':
         codec_name = 'libx265'
@@ -392,109 +392,109 @@ if __name__ == '__main__':
         video_name = f'{video}.mkv'
         original_video = f'{original_path}{video}.yuv'
 
-        # --------------------Convert mkv to yuv------------------------
-        convert_mkv_to_yuv(video_name, ugcdata_ori_path, original_video, pixfmt)
-
-        print(f'--------------------Run the process with downsampling for {codec}------------------------')
-        # --------------------Downsample to 1080p/720p------------------------
-        downsample_video_1080, downsample_video_720 = downscale_video(original_video, ugcdata_down_path, video,
-                                                                     video_width, video_height, framerate, pixfmt)
-        downsample_video_list = [f'{video}_downsample_1080p', f'{video}_downsample_720p']
-        downsample_width_list = [1920, 1280]
-        downsample_height_list = [1080, 720]
-        result_list = [(downsample_video, qp, downsample_width, downsample_height) for
-                       downsample_video, downsample_width, downsample_height in
-                       zip(downsample_video_list, downsample_width_list, downsample_height_list) for qp in qp_level]
-
-        # --------------------Calcultate quality for downsampled video------------------------
-        for downsample_video, qp, downsample_width, downsample_height in result_list:
-            vid_list.append(downsample_video)
-            cate_list.append(category)
-            res_list.append(downsample_height)
-            width_list.append(downsample_width)
-            height_list.append(downsample_height)
-            pix_list.append(pixfmt)
-            fps_list.append(framerate)
-            bitrate_raw_list.append(raw_bitrate)
-            qp_list.append(qp)
-
-            if downsample_height == 1080:
-                downsample_video_yuv = downsample_video_1080
-            elif downsample_height == 720:
-                downsample_video_yuv = downsample_video_720
-
-            # --------------------Start Encode------------------------
-            cmd_encode, encoded_video, encoded_video_log = encoding_video(codec, downsample_video, qp, framerate, downsample_width,
-                                                       downsample_height, pixfmt, downsample_video_yuv, encode_path)
-            encoding_elapsed_time = measure_command_runtime(cmd_encode)
-            encoding_elapsed_time_list.append(encoding_elapsed_time)
-
-            # ------------------------read bitrate for encoded video------------------------
-            encoded_bitrate = get_encoded_bitrate(encoded_video)
-            bitrate_encoded_list.append(encoded_bitrate)
-
-            # --------------------Start Decode------------------------
-            cmd_decode, decode_video = decoding_video_output(codec, downsample_video, qp, decode_path, encoded_video)
-            decoding_elapsed_time = measure_command_runtime(cmd_decode)
-            decoding_elapsed_time_list.append(decoding_elapsed_time)
-
-            # --------------------Upsample to 2160p------------------------
-            upsample_video_yuv = upscale_video(downsample_video, qp, upscale_path, codec, downsample_width,
-                                               downsample_height, framerate, pixfmt, decode_video)
-
-            # --------------------Trim the video------------------------
-            original_frame_count = get_video_frame_count(original_video, video_width, video_height)
-            compressed_frame_count = get_video_frame_count(upsample_video_yuv, video_width, video_height)
-
-            logger.info(f'original_frame_count: {original_frame_count}')
-            logger.info(f'compressed_frame_count: {compressed_frame_count}')
-            logger.info('---------------------------------------------')
-            if original_frame_count != compressed_frame_count:
-                compressed_yuv = f'{upscale_path}{codec}/{downsample_video}_decoded_crf_{str(qp)}_upsample_2160p_tr.yuv'
-                cmd_trim = f'ffmpeg -s {video_width}x{video_height} -i {upsample_video_yuv} -vf select="between(n\,1\,{compressed_frame_count}),setpts=PTS-STARTPTS" {compressed_yuv}'
-                print(cmd_trim)
-                subprocess.run(cmd_trim, encoding="utf-8", shell=True)
-                os.remove(upsample_video_yuv)
-            else:
-                compressed_yuv = upsample_video_yuv
-
-            # ------------------------read psnr for encoded video------------------------
-            psnr = calculate_psnr(codec_path, downsample_video, qp, framerate, video_width, video_height, pixfmt,
-                                  original_video, compressed_yuv)
-            psnr_list.append(psnr)
-
-            # --------------------VMAF computaion------------------------
-            vmaf = compute_vmaf(downsample_video, qp, vmaf_path, codec, video_width, video_height, framerate, pixfmt,
-                                original_video, compressed_yuv)
-            vmaf_list.append(vmaf)
-
-            # remove input and decoded files for saving space
-            # os.remove(encoded_video)
-            os.remove(decode_video)
-            os.remove(compressed_yuv)
-        os.remove(downsample_video_1080)
-        os.remove(downsample_video_720)
-        os.remove(original_video)
-
-        # metrics
-        df_metrics['vid'] = vid_list
-        df_metrics['category'] = cate_list
-        df_metrics['resolution'] = res_list
-        df_metrics['width'] = width_list
-        df_metrics['height'] = height_list
-        df_metrics['pixfmt'] = pix_list
-        df_metrics['framerate'] = fps_list
-        df_metrics['bitrate_rawvideo (kb/s)'] = bitrate_raw_list
-        df_metrics['bitrate_encoded (kb/s)'] = bitrate_encoded_list
-        df_metrics['PSNR'] = psnr_list
-        df_metrics['VMAF'] = vmaf_list
-        df_metrics['QP'] = qp_list
-        df_metrics['encoding_elapsed_time'] = encoding_elapsed_time_list
-        df_metrics['decoding_elapsed_time'] = decoding_elapsed_time_list
-
-        print(df_metrics)
-        metrics_name = f'../videocodec_downsample_4k/YOUTUBE_UGC_2160P_downsample_{codec}_metrics_{video}.csv'
-        df_metrics.to_csv(metrics_name, index=None)
+        # # --------------------Convert mkv to yuv------------------------
+        # convert_mkv_to_yuv(video_name, ugcdata_ori_path, original_video, pixfmt)
+        #
+        # print(f'--------------------Run the process with downsampling for {codec}------------------------')
+        # # --------------------Downsample to 1080p/720p------------------------
+        # downsample_video_1080, downsample_video_720 = downscale_video(original_video, ugcdata_down_path, video,
+        #                                                              video_width, video_height, framerate, pixfmt)
+        # downsample_video_list = [f'{video}_downsample_1080p', f'{video}_downsample_720p']
+        # downsample_width_list = [1920, 1280]
+        # downsample_height_list = [1080, 720]
+        # result_list = [(downsample_video, qp, downsample_width, downsample_height) for
+        #                downsample_video, downsample_width, downsample_height in
+        #                zip(downsample_video_list, downsample_width_list, downsample_height_list) for qp in qp_level]
+        #
+        # # --------------------Calcultate quality for downsampled video------------------------
+        # for downsample_video, qp, downsample_width, downsample_height in result_list:
+        #     vid_list.append(downsample_video)
+        #     cate_list.append(category)
+        #     res_list.append(downsample_height)
+        #     width_list.append(downsample_width)
+        #     height_list.append(downsample_height)
+        #     pix_list.append(pixfmt)
+        #     fps_list.append(framerate)
+        #     bitrate_raw_list.append(raw_bitrate)
+        #     qp_list.append(qp)
+        #
+        # #     if downsample_height == 1080:
+        # #         downsample_video_yuv = downsample_video_1080
+        # #     elif downsample_height == 720:
+        # #         downsample_video_yuv = downsample_video_720
+        # #
+        # #     # --------------------Start Encode------------------------
+        # #     cmd_encode, encoded_video, encoded_video_log = encoding_video(codec, downsample_video, qp, framerate, downsample_width,
+        # #                                                downsample_height, pixfmt, downsample_video_yuv, encode_path)
+        # #     encoding_elapsed_time = measure_command_runtime(cmd_encode)
+        # #     encoding_elapsed_time_list.append(encoding_elapsed_time)
+        # #
+        # #     # ------------------------read bitrate for encoded video------------------------
+        # #     encoded_bitrate = get_encoded_bitrate(encoded_video)
+        # #     bitrate_encoded_list.append(encoded_bitrate)
+        # #
+        # #     # --------------------Start Decode------------------------
+        # #     cmd_decode, decode_video = decoding_video_output(codec, downsample_video, qp, decode_path, encoded_video)
+        # #     decoding_elapsed_time = measure_command_runtime(cmd_decode)
+        # #     decoding_elapsed_time_list.append(decoding_elapsed_time)
+        # #
+        # #     # --------------------Upsample to 2160p------------------------
+        # #     upsample_video_yuv = upscale_video(downsample_video, qp, upscale_path, codec, downsample_width,
+        # #                                        downsample_height, framerate, pixfmt, decode_video)
+        # #
+        # #     # --------------------Trim the video------------------------
+        # #     original_frame_count = get_video_frame_count(original_video, video_width, video_height)
+        # #     compressed_frame_count = get_video_frame_count(upsample_video_yuv, video_width, video_height)
+        # #
+        # #     logger.info(f'original_frame_count: {original_frame_count}')
+        # #     logger.info(f'compressed_frame_count: {compressed_frame_count}')
+        # #     logger.info('---------------------------------------------')
+        # #     if original_frame_count != compressed_frame_count:
+        # #         compressed_yuv = f'{upscale_path}{codec}/{downsample_video}_decoded_crf_{str(qp)}_upsample_2160p_tr.yuv'
+        # #         cmd_trim = f'ffmpeg -s {video_width}x{video_height} -i {upsample_video_yuv} -vf select="between(n\,1\,{compressed_frame_count}),setpts=PTS-STARTPTS" {compressed_yuv}'
+        # #         print(cmd_trim)
+        # #         subprocess.run(cmd_trim, encoding="utf-8", shell=True)
+        # #         os.remove(upsample_video_yuv)
+        # #     else:
+        # #         compressed_yuv = upsample_video_yuv
+        # #
+        # #     # ------------------------read psnr for encoded video------------------------
+        # #     psnr = calculate_psnr(codec_path, downsample_video, qp, framerate, video_width, video_height, pixfmt,
+        # #                           original_video, compressed_yuv)
+        # #     psnr_list.append(psnr)
+        # #
+        # #     # --------------------VMAF computaion------------------------
+        # #     vmaf = compute_vmaf(downsample_video, qp, vmaf_path, codec, video_width, video_height, framerate, pixfmt,
+        # #                         original_video, compressed_yuv)
+        # #     vmaf_list.append(vmaf)
+        # #
+        # #     # remove input and decoded files for saving space
+        # #     # os.remove(encoded_video)
+        # #     os.remove(decode_video)
+        # #     os.remove(compressed_yuv)
+        # os.remove(downsample_video_1080)
+        # os.remove(downsample_video_720)
+        # os.remove(original_video)
+        #
+        # # metrics
+        # df_metrics['vid'] = vid_list
+        # df_metrics['category'] = cate_list
+        # df_metrics['resolution'] = res_list
+        # df_metrics['width'] = width_list
+        # df_metrics['height'] = height_list
+        # df_metrics['pixfmt'] = pix_list
+        # df_metrics['framerate'] = fps_list
+        # df_metrics['bitrate_rawvideo (kb/s)'] = bitrate_raw_list
+        # # df_metrics['bitrate_encoded (kb/s)'] = bitrate_encoded_list
+        # # df_metrics['PSNR'] = psnr_list
+        # # df_metrics['VMAF'] = vmaf_list
+        # df_metrics['QP'] = qp_list
+        # # df_metrics['encoding_elapsed_time'] = encoding_elapsed_time_list
+        # # df_metrics['decoding_elapsed_time'] = decoding_elapsed_time_list
+        #
+        # print(df_metrics)
+        # metrics_name = f'../videocodec_downsample_4k/YOUTUBE_UGC_2160P_downsample_{codec}_metrics_{video}.csv'
+        # df_metrics.to_csv(metrics_name, index=None)
 
 
 
@@ -524,29 +524,29 @@ if __name__ == '__main__':
         for index, (downsample_video, qp, downsample_width, downsample_height) in enumerate(result_list):
             logger.info(f"Index: {index}, downsample_video: {downsample_video}, qp: {qp}, downsample_width: {downsample_width}, downsample_height: {downsample_height}")
 
-            elapsed_time = decoding_elapsed_time_list[index]
-            if downsample_height == 720:
-                duplicate_count = 2
-            else:
-                duplicate_count = 1
-            duplicate_count_list.append(duplicate_count)
-            logger.info(f"decoding_elapsed_time: {elapsed_time}, duplicate_count: {duplicate_count}")
-
             if downsample_height == 1080:
                 downsample_video_yuv = downsample_video_1080
             elif downsample_height == 720:
                 downsample_video_yuv = downsample_video_720
 
+            # elapsed_time = decoding_elapsed_time_list[index]
             duplicate_path = f'{ugcdata_down_path}duplicate/'
             downsample_duplicate = f'{downsample_video}_duplicate'
             downsample_duplicate_yuv = f'{duplicate_path}{downsample_duplicate}.yuv'
 
-            # duplicate the video
-            filter_string = f'[0:v]' * duplicate_count
-            filter_complex = f'"{filter_string}concat=n={duplicate_count}:v=1[v]"'
-            cmd_duplicate = f'ffmpeg -f rawvideo -pix_fmt {pixfmt} -s {downsample_width}x{downsample_height} -r {framerate} -y -i {downsample_video_yuv} -filter_complex {filter_complex} -map "[v]" {downsample_duplicate_yuv}'
-            subprocess.call(cmd_duplicate, shell=True)
-            logger.debug(f'running ffmpeg with command: {cmd_duplicate}')
+            if downsample_height == 720:
+                duplicate_count = 2
+                # duplicate the video
+                filter_string = f'[0:v]' * duplicate_count
+                filter_complex = f'"{filter_string}concat=n={duplicate_count}:v=1[v]"'
+                cmd_duplicate = f'ffmpeg -f rawvideo -pix_fmt {pixfmt} -s {downsample_width}x{downsample_height} -r {framerate} -y -i {downsample_video_yuv} -filter_complex {filter_complex} -map "[v]" {downsample_duplicate_yuv}'
+                subprocess.call(cmd_duplicate, shell=True)
+                logger.debug(f'running ffmpeg with command: {cmd_duplicate}')
+            else:
+                duplicate_count = 1
+                downsample_duplicate_yuv = downsample_video_yuv
+            duplicate_count_list.append(duplicate_count)
+            # logger.info(f"decoding_elapsed_time: {elapsed_time}, duplicate_count: {duplicate_count}")
 
             # read bitrate for raw duplicate video
             raw_bitrate_duplicate = get_raw_yuv_bitrate(pixfmt, downsample_width, downsample_height, downsample_duplicate_yuv)
@@ -573,6 +573,7 @@ if __name__ == '__main__':
             logger.info(f'encode_energy: {encode_energy} J')
             count_encode_list.append(1)
             encode_energy_list.append(encode_energy)
+            time.sleep(10)
 
             # --------------------Start Decode------------------------
             cmd_decode, decode_video, decoded_video_log = decoding_video_nooutput(codec, downsample_duplicate, qp, decode_path, encoded_video)
@@ -594,6 +595,7 @@ if __name__ == '__main__':
             logger.info(f'decode_energy: {decode_energy} J')
             count_decode_list.append(1)
             decode_energy_list.append(decode_energy)
+            time.sleep(10)
 
             total_energy = encode_energy + decode_energy
             total_energy_list.append(total_energy)
@@ -607,7 +609,9 @@ if __name__ == '__main__':
             # remove input and decoded files for saving space
             # os.remove(encoded_video)
             # os.remove(decode_video)
-            os.remove(downsample_duplicate_yuv)
+            if downsample_height == 720:
+                os.remove(downsample_duplicate_yuv)
+
         os.remove(downsample_video_1080)
         os.remove(downsample_video_720)
         os.remove(original_video)

@@ -118,13 +118,64 @@
      **Make sure to recreate folder structure /<resolution>**
   3. Keep the 'src/logs' folder
 
+  
+- Deploying rapl-tools on Ubuntu
+
+  1. **Introduction:**
+     - Tools for monitoring CPU power with Intel's RAPL interface.
+     - Original GitHub Repository: [kentcz/rapl-tools](https://github.com/kentcz/rapl-tools/).
+
+  2. **Building the Tool:**
+     - The tool is built with Gnu Make. G++ version 4.7 or higher is required:
+       ```bash
+       make
+       ```
+
+  3. **Setup on Ubuntu:**
+     - Install and load the msr module:
+       ```bash
+       sudo apt-get install msr-tools
+       sudo modprobe msr
+       ```
+
+     - Set permissions:
+       ```bash
+       sudo chmod o+rw /dev/cpu/0/msr
+       ```
+
+# Requirement
+```
+# Create and activate a Conda environment
+conda create -n videoenc pip python=3.10
+conda activate videoenc
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Deactivate the Conda environment
+conda deactivate
+```
+
    
 # 4K Test Sequences:
-- Gaming_2160P-2dc4.mkv: 13.9 GB
-- HDR_2160P-06ae.mkv: 11.1 GB
-- Sports_2160P-0455.mkv: 7.0 GB
-- Vlog_2160P-030a.mkv: 5.6 GB
+You can find the test dataset from YT-UGC Dataset [[Yilin Wang, 2019][1]]:
+[UGC Dataset Google Cloud Storage](https://console.cloud.google.com/storage/browser/ugc-dataset/original_videos;tab=objects?prefix=&forceOnObjectsSortingFiltering=false)
 
+- Gaming_2160P-2dc4.mkv
+- HDR_2160P-06ae.mkv
+- Sports_2160P-0455.mkv
+- Vlog_2160P-030a.mkv
+- Animation_2160P-41dc,mkv
+- Gaming_2160P-2cb1.mkv
+- Gaming_2160P-3002.mkv 
+- Gaming_2160P-348d.mkv
+- Gaming_2160P-34a1.mkv 
+- Sports_2160P-086d.mkv 
+- Sports_2160P-1261.mkv 
+- Sports_2160P-1733.mkv 
+- Sports_2160P-1b70.mkv
+
+[1]: https://arxiv.org/abs/1904.06457
 
 
 

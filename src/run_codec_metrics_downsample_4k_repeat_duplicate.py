@@ -793,6 +793,8 @@ if __name__ == '__main__':
         energy_name = f'../metrics/energy/{codec}/YOUTUBE_UGC_2160P_downsample_{codec}_metrics_timestamp_repeat_duplicate_distribution_energy_{video}.csv'
         df_metrics.to_csv(energy_name, index=None)
 
+        logger.info('Finish')
+        
         # keep power log
         print(total_failure_encoding_power_list)
         df_encoding_power['vid'] = vid_list
