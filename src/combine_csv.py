@@ -2,7 +2,13 @@ import os
 import pandas as pd
 
 codec = f'x264'
-folder_path = f'../metrics/energy/{codec}/'
+measure_option = 'software'
+
+if measure_option == 'software':
+    folder_path = f'../metrics/rapl_energy/{codec}/'
+elif measure_option == 'hardware':
+    folder_path = f'../metrics/energy/{codec}/'
+
 
 # Get all files in the folder
 files = os.listdir(folder_path)
@@ -10,7 +16,7 @@ files = os.listdir(folder_path)
 # Used to store processed video names to prevent duplicate processing
 processed_video_names = set()
 
-hardware_data = pd.DataFrame()
+energy_data = pd.DataFrame()
 for file in files:
     if file.endswith('.csv'):
         video_name = file.rsplit('_', 2)[-2] + '_' + file.rsplit('_', 2)[-1].split('.')[0]
@@ -36,6 +42,10 @@ for file in files:
             # Add the video_name column
             combined_df.insert(0, 'video_name', video_name)
 
-            hardware_data = pd.concat([hardware_data, combined_df], ignore_index=True)
+            energy_data = pd.concat([energy_data, combined_df], ignore_index=True)
 
-hardware_data.to_csv(f'../metrics/quality_energy_hardware_{codec}.csv', index=False)
+if measure_option == 'software':
+    energy_data.to_csv(f'../metrics/quality_energy_{measure_option}_rapl_{codec}.csv', index=False)
+
+elif measure_option == 'hardware':
+    energy_data.to_csv(f'../metrics/quality_energy_{measure_option}_{codec}.csv', index=False)
