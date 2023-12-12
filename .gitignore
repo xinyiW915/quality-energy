@@ -1,0 +1,6 @@
+# .gitignore
+.DS_Store
+ugc-dataset/
+videocodec/
+videocodec_downsample_1080p/
+vvc_command.txt
