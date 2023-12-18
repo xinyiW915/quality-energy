@@ -391,84 +391,84 @@ if __name__ == '__main__':
         video_name = f'{video}.mkv'
         original_video = f'{original_path}{video}.yuv'
 
-        # # --------------------Convert mkv to yuv------------------------
-        # convert_mkv_to_yuv(video_name, ugcdata_ori_path, original_video, pixfmt)
-        #
-        # print(f'--------------------Run the process without downsampling for {codec}------------------------')
-        # for qp in qp_level:
-        #     vid_list.append(video)
-        #     cate_list.append(category)
-        #     res_list.append(resolution)
-        #     width_list.append(video_width)
-        #     height_list.append(video_height)
-        #     pix_list.append(pixfmt)
-        #     fps_list.append(framerate)
-        #     bitrate_raw_list.append(raw_bitrate)
-        #     qp_list.append(qp)
-        #
-        #     # --------------------Start Encode------------------------
-        #     cmd_encode, encoded_video, encoded_video_log = encoding_video(codec, video, qp, framerate, video_width, video_height, pixfmt, original_video, encode_path)
-        #     encoding_elapsed_time = measure_command_runtime(cmd_encode)
-        #     encoding_elapsed_time_list.append(encoding_elapsed_time)
-        #
-        #     # ------------------------read bitrate for encoded video------------------------
-        #     encoded_bitrate = get_encoded_bitrate(encoded_video)
-        #     bitrate_encoded_list.append(encoded_bitrate)
-        #
-        #     # --------------------Start Decode------------------------
-        #     cmd_decode, decode_video = decoding_video_output(codec, video, qp, decode_path, encoded_video)
-        #     decoding_elapsed_time = measure_command_runtime(cmd_decode)
-        #     decoding_elapsed_time_list.append(decoding_elapsed_time)
-        #
-        #     # --------------------Trim the video------------------------
-        #     original_frame_count = get_video_frame_count(original_video, video_width, video_height)
-        #     compressed_frame_count = get_video_frame_count(decode_video, video_width, video_height)
-        #
-        #     logger.info(f'original_frame_count: {original_frame_count}')
-        #     logger.info(f'compressed_frame_count: {compressed_frame_count}')
-        #     logger.info('---------------------------------------------')
-        #     if original_frame_count != compressed_frame_count:
-        #         compressed_yuv = f'{decode_path}{codec}/{video}_decoded_crf_{str(qp)}_tr.yuv'
-        #         cmd_trim = f'ffmpeg -s {video_width}x{video_height} -i {decode_video} -vf select="between(n\,1\,{compressed_frame_count}),setpts=PTS-STARTPTS" {compressed_yuv}'
-        #         print(cmd_trim)
-        #         subprocess.run(cmd_trim, encoding="utf-8", shell=True)
-        #         os.remove(decode_video)
-        #     else:
-        #         compressed_yuv = decode_video
-        #
-        #     # ------------------------read psnr for encoded video------------------------
-        #     psnr = calculate_psnr(codec_path, video, qp, framerate, video_width, video_height, pixfmt, original_video, compressed_yuv)
-        #     psnr_list.append(psnr)
-        #
-        #     # --------------------VMAF computaion------------------------
-        #     vmaf = compute_vmaf(video, qp, vmaf_path, codec, video_width, video_height, framerate, pixfmt, original_video, compressed_yuv)
-        #     vmaf_list.append(vmaf)
-        #
-        #     # remove input and decoded files for saving space
-        #     # os.remove(encoded_video)
-        #     # os.remove(decode_video)
-        #     os.remove(compressed_yuv)
-        # os.remove(original_video)
-        #
-        # # metrics
-        # df_metrics['vid'] = vid_list
-        # df_metrics['category'] = cate_list
-        # df_metrics['resolution'] = res_list
-        # df_metrics['width'] = width_list
-        # df_metrics['height'] = height_list
-        # df_metrics['pixfmt'] = pix_list
-        # df_metrics['framerate'] = fps_list
-        # df_metrics['bitrate_rawvideo (kb/s)'] = bitrate_raw_list
-        # df_metrics['bitrate_encoded (kb/s)'] = bitrate_encoded_list
-        # df_metrics['PSNR'] = psnr_list
-        # df_metrics['VMAF'] = vmaf_list
-        # df_metrics['QP'] = qp_list
-        # df_metrics['encoding_elapsed_time'] = encoding_elapsed_time_list
-        # df_metrics['decoding_elapsed_time'] = decoding_elapsed_time_list
-        #
-        # print(df_metrics)
-        # metrics_name = f'../videocodec_4k/YOUTUBE_UGC_2160P_nodownsample_{codec}_metrics_{video}.csv'
-        # df_metrics.to_csv(metrics_name, index=None)
+        # --------------------Convert mkv to yuv------------------------
+        convert_mkv_to_yuv(video_name, ugcdata_ori_path, original_video, pixfmt)
+
+        print(f'--------------------Run the process without downsampling for {codec}------------------------')
+        for qp in qp_level:
+            vid_list.append(video)
+            cate_list.append(category)
+            res_list.append(resolution)
+            width_list.append(video_width)
+            height_list.append(video_height)
+            pix_list.append(pixfmt)
+            fps_list.append(framerate)
+            bitrate_raw_list.append(raw_bitrate)
+            qp_list.append(qp)
+
+            # --------------------Start Encode------------------------
+            cmd_encode, encoded_video, encoded_video_log = encoding_video(codec, video, qp, framerate, video_width, video_height, pixfmt, original_video, encode_path)
+            encoding_elapsed_time = measure_command_runtime(cmd_encode)
+            encoding_elapsed_time_list.append(encoding_elapsed_time)
+
+            # ------------------------read bitrate for encoded video------------------------
+            encoded_bitrate = get_encoded_bitrate(encoded_video)
+            bitrate_encoded_list.append(encoded_bitrate)
+
+            # --------------------Start Decode------------------------
+            cmd_decode, decode_video = decoding_video_output(codec, video, qp, decode_path, encoded_video)
+            decoding_elapsed_time = measure_command_runtime(cmd_decode)
+            decoding_elapsed_time_list.append(decoding_elapsed_time)
+
+            # --------------------Trim the video------------------------
+            original_frame_count = get_video_frame_count(original_video, video_width, video_height)
+            compressed_frame_count = get_video_frame_count(decode_video, video_width, video_height)
+
+            logger.info(f'original_frame_count: {original_frame_count}')
+            logger.info(f'compressed_frame_count: {compressed_frame_count}')
+            logger.info('---------------------------------------------')
+            if original_frame_count != compressed_frame_count:
+                compressed_yuv = f'{decode_path}{codec}/{video}_decoded_crf_{str(qp)}_tr.yuv'
+                cmd_trim = f'ffmpeg -s {video_width}x{video_height} -i {decode_video} -vf select="between(n\,1\,{compressed_frame_count}),setpts=PTS-STARTPTS" {compressed_yuv}'
+                print(cmd_trim)
+                subprocess.run(cmd_trim, encoding="utf-8", shell=True)
+                os.remove(decode_video)
+            else:
+                compressed_yuv = decode_video
+
+            # ------------------------read psnr for encoded video------------------------
+            psnr = calculate_psnr(codec_path, video, qp, framerate, video_width, video_height, pixfmt, original_video, compressed_yuv)
+            psnr_list.append(psnr)
+
+            # --------------------VMAF computaion------------------------
+            vmaf = compute_vmaf(video, qp, vmaf_path, codec, video_width, video_height, framerate, pixfmt, original_video, compressed_yuv)
+            vmaf_list.append(vmaf)
+
+            # remove input and decoded files for saving space
+            # os.remove(encoded_video)
+            # os.remove(decode_video)
+            os.remove(compressed_yuv)
+        os.remove(original_video)
+
+        # metrics
+        df_metrics['vid'] = vid_list
+        df_metrics['category'] = cate_list
+        df_metrics['resolution'] = res_list
+        df_metrics['width'] = width_list
+        df_metrics['height'] = height_list
+        df_metrics['pixfmt'] = pix_list
+        df_metrics['framerate'] = fps_list
+        df_metrics['bitrate_rawvideo (kb/s)'] = bitrate_raw_list
+        df_metrics['bitrate_encoded (kb/s)'] = bitrate_encoded_list
+        df_metrics['PSNR'] = psnr_list
+        df_metrics['VMAF'] = vmaf_list
+        df_metrics['QP'] = qp_list
+        df_metrics['encoding_elapsed_time'] = encoding_elapsed_time_list
+        df_metrics['decoding_elapsed_time'] = decoding_elapsed_time_list
+
+        print(df_metrics)
+        metrics_name = f'../videocodec_4k/YOUTUBE_UGC_2160P_nodownsample_{codec}_metrics_{video}.csv'
+        df_metrics.to_csv(metrics_name, index=None)
 
 
 
