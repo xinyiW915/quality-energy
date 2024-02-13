@@ -1,0 +1,7 @@
+vid,category,resolution,x_Subjects,MOSFull,MOSChunk00,MOSChunk05,MOSChunk10,stdFull,stdChunk00,stdChunk05,stdChunk10,width,height,pixfmt,framerate,nb_frames,bitdepth,bitrate
+Animation_1080P-05f8,Animation,1080,146,3.901,3.757,3.671,3.728,0.871,0.734,0.733,0.738,1920,1080,yuv420p,25,,,
+Animation_1080P-3d67,Animation,1080,118,2.778,2.297,2.313,2.201,0.907,1.005,0.978,0.857,1920,1080,yuv420p,4,,,
+Animation_1080P-646f,Animation,1080,143,3.376,3.248,3.228,3.383,0.709,0.698,0.736,0.761,1920,1080,yuv420p,29.97002997,,,
+TelevisionClip_1080P-3d83,TelevisionClip,1080,124,3.382,3.195,3.102,3.146,0.521,0.636,0.608,0.63,1920,1080,yuv420p,16.632,,,
+TelevisionClip_1080P-5278,TelevisionClip,1080,125,4.099,4.056,4.045,3.906,0.617,0.624,0.634,0.468,1920,1080,yuv420p,24.97502498,,,
+TelevisionClip_1080P-68c6,TelevisionClip,1080,132,4.561,4.661,4.658,4.613,0.436,0.374,0.387,0.387,1920,1080,yuv420p,25,,,
