@@ -1,2 +1,0 @@
-vid,category,resolution,x_Subjects,MOSFull,MOSChunk00,MOSChunk05,MOSChunk10,stdFull,stdChunk00,stdChunk05,stdChunk10,width,height,pixfmt,framerate,nb_frames,bitdepth,bitrate
-HDR_2160P-6fab,HDR,2160,110,3.443,3.496,3.455,3.371,0.764,0.716,0.776,0.852,3840,2160,yuv422p10le,59.94006309,,,
