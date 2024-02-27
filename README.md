@@ -1,4 +1,4 @@
-# quality-energy
+# Quality-Rate-Energy Measurements for Video Compression
 
 ## Overall Experiment Architecture
 
