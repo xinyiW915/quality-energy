@@ -1,8 +1,15 @@
-# quality-energy
+# Measuring Energy, Quality, and Rate in Video Compression
+This repository contains data and code from the following paper:
+A. Katsenou, X. Wang, D. Schien, and D. Bull, ["Comparative Study of Hardware and Software Power Measurements in Video Compression"](https://arxiv.org/abs/2312.12150), accepted in PCS 2024. 
 
-## Overall Experiment Architecture
+The paper presents a comprehensive study of power measurement techniques in video compression, comparing the use of hardware and software power meters. An experimental methodology to ensure reliability of measurements is introduced. Key findings demonstrate the high correlation of hardware and software based energy measurements for two video codecs across different spatial and temporal resolutions at a lower computational overhead.
 
-![Overall Experiment Architecture](./energy_workflow.png)
+
+## Experiment Pipeline
+
+<img src="./Overview.png" alt="Overview" width="800"/>
+
+The figure shows the basic experimental pipeline.
 
 
 ### Preprocessing
@@ -10,28 +17,30 @@
 - [x] Read Bitrate for Raw Video
 - [x] Downsample 4K to 1080p and 720p
 - [x] Hardware Power Measurement: 
-  - 2 duplicate times for 4K videos
-  - 12 duplicate times for 1080p and 720p videos
+  - 2 duplicate times for 4K videos (this can be adapted, 2 is the usual number)
+  - 12 duplicate times for 1080p and 720p videos (this can be adapted, 12 is the usual number)
 - [x] Software Power Measurement: 
-  - No duplicate time for 4K and 1080p videos
-  - 2 duplicate times for 720p videos
+  - No duplications required for 4K and 1080p videos due to the high sampling rate
+  - 2 duplicate times for 720p videos (this can be adapted, 2 is the usual number)
 - [x] Read Bitrate for Raw Duplicate Video
 
 ### Encoding  
-- [x] Encode with Different QP Levels: [10, 20, 30, 40, 50]
-- [x] Hardware Power Measurement: Repeat 10 times
-- [x] Software Power Experiment: No repeat time
+- [x] Encode at different QP levels: [10, 20, 30, 40, 50]
+- [x] Hardware Power Measurement: Repeat X times (these reps have been tested for conformance with a t-test, 10 is the usual number)
+- [x] Software Power Experiment: No repeat time (because of the high sampling rate)
 - [x] Read Bitrate for Encoded Video
 - [x] Calculate Encoding Energy Consumption
 
 ### Decoding
-- [x] Hardware Power Measurement: Repeat 10 times
-- [x] Software Power Experiment: No repeat time
-- [x] Without Writing the Decoded File
+
+- [x] Hardware Power Measurement: Repeat X times (these reps have been tested for conformance with a t-test, 10 is the usual number)
+- [x] Software Power Experiment: Different repetitions based on resolution
 - [x] Calculate Decoding Energy Consumption
 
-### Measure Quality
-- [x] Upsample Decoded Downsampled Videos to 4K 
+*Note: During decoding no data are stored locally.*
+
+### Measuring Quality
+- [x] Upsample Decoded Downsampled Videos to 4K (native spatial resolution)
 - [x] Calculate PSNR
 - [x] Calculate VMAF
 
@@ -39,6 +48,7 @@
 - [x] Measure Time and Get Power Log
 - [x] Calculate Energy for Each Coding Job (Encoding/Decoding)
 
+*Note: In the case of hardware power measurements, the alignment of the timestamps of the encoding/decoding process with the power logging is important.*
 
 
 ## Main Workflow
