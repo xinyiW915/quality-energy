@@ -8,3 +8,6 @@ This repository contains data and code from an investigation of quality-rate-ene
 If you use the data or code provided in this repository, please cite the following:
 - A. Katsenou, X. Wang, D. Schien, and D. Bull, ["Comparative Study of Hardware and Software Power Measurements in Video Compression"](https://arxiv.org/abs/2312.12150), *accepted in PCS 2024*.
 - A. Katsenou, X. Wang, D. Schien, and D. Bull, ["Rate-Quality or Energy-Quality Pareto Fronts for Adaptive Video Streaming?](https://arxiv.org/abs/2402.07057), 2024.
+
+## Acknowledgment
+This work has been supported by the UKRI Creative Bristol+Bath Cluster, the UKRI MyWorld Strength in Places Programme (SIPF00006/1), and the Bristol Digital Futures Institute.
