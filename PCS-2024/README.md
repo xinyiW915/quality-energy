@@ -67,18 +67,7 @@ The figure shows the basic experimental pipeline.
 - **run_codec_metrics_downsample_4k_duplicate_rapl.py**: Downsample and duplicate
 - **run_codec_metrics_nodownsample_4k_duplicate_rapl.py**: No downsample and duplicate
 
-# Deployment
-- Download some original videos from YouTube
-
-  1. Find files with `gsutil ls gs://ugc-dataset/original_videos/`
-  2. Download desired files. For example:
-     ```
-     gsutil -m cp -r gs://ugc-dataset/original_videos/TelevisionClip/1080P/TelevisionClip_1080P-68c6.mkv .
-     ```
-     **Make sure to recreate folder structure /<resolution>**
-  3. Keep the 'src/logs' folder
-
-  
+# Deployment  
 - Deploying rapl-tools on Ubuntu
 
   1. **Introduction:**
@@ -118,8 +107,19 @@ conda deactivate
 
    
 # 4K Test Sequences:
-You can find the test dataset from YT-UGC Dataset [[Yilin Wang, 2019][1]]:
+- Download some original videos from YouTube-UGC Dataset [[Yilin Wang, 2019][1]]:
 [UGC Dataset Google Cloud Storage](https://console.cloud.google.com/storage/browser/ugc-dataset/original_videos;tab=objects?prefix=&forceOnObjectsSortingFiltering=false)
+
+  1. Find files with `gsutil ls gs://ugc-dataset/original_videos/`
+  2. Download desired files. For example:
+     ```
+     gsutil -m cp -r gs://ugc-dataset/original_videos/TelevisionClip/1080P/TelevisionClip_1080P-68c6.mkv .
+     ```
+     **Make sure to recreate folder structure /<resolution>**
+  3. Keep the 'src/logs' folder
+
+
+The video sequences used in this paper are:
 
 - Gaming_2160P-2dc4.mkv
 - HDR_2160P-06ae.mkv
